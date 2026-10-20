@@ -35,13 +35,9 @@
   function handleInput() {
     if (state.isDead || isPaused) return;
     resumeAudio();
-    if (!state.hasStarted) {
-      state = flap(state);
-      if (soundEnabled) playFlap();
-    } else {
-      state = flap(state);
-      if (soundEnabled) playFlap();
-    }
+    if (!state.hasStarted) hasStarted = true;
+    state = flap(state);
+    if (soundEnabled) playFlap();
   }
 
   function reset() {
