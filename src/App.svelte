@@ -87,6 +87,12 @@
         if (next.score !== state.score) {
           score = next.score;
           if (soundEnabled) playScore();
+
+          if (next.score > highScore) {
+            highScore = next.score;
+            isNewHigh = true;
+            localStorage.setItem(HIGH_SCORE_KEY, String(next.score));
+          }
         }
 
         if (next.hasStarted && !state.hasStarted) hasStarted = true;
@@ -97,12 +103,7 @@
             playHit();
             setTimeout(() => playDie(), 80);
           }
-          if (next.score > highScore) {
-            highScore = next.score;
-            isNewHigh = true;
-            localStorage.setItem(HIGH_SCORE_KEY, String(next.score));
-            if (soundEnabled) setTimeout(() => playMedal(), 400);
-          }
+          if (isNewHigh && soundEnabled) setTimeout(() => playMedal(), 400);
         }
 
         state = next;
