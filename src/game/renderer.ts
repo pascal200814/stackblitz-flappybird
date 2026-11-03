@@ -7,20 +7,23 @@ import {
   GROUND_HEIGHT,
   type GameState,
 } from "./engine";
+import type { CharacterPalette } from "./characters";
 
 const SKY_TOP = "#4ec0ca";
 const SKY_BOTTOM = "#71c5cf";
 
 const CLOUD_COLOR = "rgba(255,255,255,0.5)";
 
-const BIRD_BODY = "#f7d51d";
-const BIRD_BODY_DARK = "#c9a200";
-const BIRD_WING = "#fff";
-const BIRD_WING_DARK = "#ddd";
-const BIRD_EYE_WHITE = "#fff";
-const BIRD_PUPIL = "#222";
-const BIRD_BEAK = "#f29030";
-const BIRD_BEAK_DARK = "#d4731a";
+const DEFAULT_BIRD: CharacterPalette = {
+  id: "classic",
+  name: "Classic",
+  body: "#f7d51d",
+  bodyDark: "#c9a200",
+  wing: "#fff",
+  wingDark: "#ddd",
+  beak: "#f29030",
+  beakDark: "#d4731a",
+};
 
 const PIPE_BODY = "#73bf2e";
 const PIPE_DARK = "#3a6b1a";
@@ -157,10 +160,10 @@ function drawPipe(ctx: CanvasRenderingContext2D, pipe: GameState["pipes"][0]) {
   ctx.fillRect(x + 8, bottomY + 22, 4, bottomH - 22);
 }
 
-function drawBirdTrail(ctx: CanvasRenderingContext2D, state: GameState) {
+function drawBirdTrail(ctx: CanvasRenderingContext2D, state: GameState, bird: CharacterPalette) {
   for (const t of state.birdTrail) {
     ctx.globalAlpha = t.life * 0.3;
-    ctx.fillStyle = BIRD_BODY;
+    ctx.fillStyle = bird.body;
     ctx.beginPath();
     ctx.arc(t.x, t.y, BIRD_RADIUS * t.life * 0.6, 0, Math.PI * 2);
     ctx.fill();
@@ -168,7 +171,7 @@ function drawBirdTrail(ctx: CanvasRenderingContext2D, state: GameState) {
   ctx.globalAlpha = 1;
 }
 
-function drawBird(ctx: CanvasRenderingContext2D, state: GameState) {
+function drawBird(ctx: CanvasRenderingContext2D, state: GameState, bird: CharacterPalette = DEFAULT_BIRD) {
   const { birdY, birdRotation, frameCount, isPlaying } = state;
 
   ctx.save();
@@ -181,7 +184,7 @@ function drawBird(ctx: CanvasRenderingContext2D, state: GameState) {
   ctx.shadowOffsetY = 3;
 
   // Body
-  ctx.fillStyle = BIRD_BODY;
+  ctx.fillStyle = bird.body;
   ctx.beginPath();
   ctx.arc(0, 0, BIRD_RADIUS, 0, Math.PI * 2);
   ctx.fill();
@@ -199,11 +202,11 @@ function drawBird(ctx: CanvasRenderingContext2D, state: GameState) {
   // Wing — flaps faster when playing
   const wingSpeed = isPlaying ? 0.45 : 0.25;
   const wingFlap = Math.sin(frameCount * wingSpeed) * (isPlaying ? 7 : 5);
-  ctx.fillStyle = BIRD_WING;
+  ctx.fillStyle = bird.wing;
   ctx.beginPath();
   ctx.ellipse(-7, 2 + wingFlap, 11, 7.5, -0.2, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = BIRD_WING_DARK;
+  ctx.strokeStyle = bird.wingDark;
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
@@ -215,11 +218,11 @@ function drawBird(ctx: CanvasRenderingContext2D, state: GameState) {
   ctx.stroke();
 
   // Eye
-  ctx.fillStyle = BIRD_EYE_WHITE;
+  ctx.fillStyle = "#fff";
   ctx.beginPath();
   ctx.arc(8, -7, 6.5, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = BIRD_PUPIL;
+  ctx.fillStyle = "#222";
   ctx.beginPath();
   ctx.arc(10, -7, 3.2, 0, Math.PI * 2);
   ctx.fill();
@@ -230,26 +233,26 @@ function drawBird(ctx: CanvasRenderingContext2D, state: GameState) {
   ctx.fill();
 
   // Beak
-  ctx.fillStyle = BIRD_BEAK;
+  ctx.fillStyle = bird.beak;
   ctx.beginPath();
   ctx.moveTo(14, -3);
   ctx.lineTo(25, 0);
   ctx.lineTo(14, 4);
   ctx.closePath();
   ctx.fill();
-  ctx.strokeStyle = BIRD_BEAK_DARK;
+  ctx.strokeStyle = bird.beakDark;
   ctx.lineWidth = 1;
   ctx.stroke();
 
   // Beak line
-  ctx.strokeStyle = BIRD_BEAK_DARK;
+  ctx.strokeStyle = bird.beakDark;
   ctx.beginPath();
   ctx.moveTo(14, 0.5);
   ctx.lineTo(25, 0);
   ctx.stroke();
 
   // Body outline
-  ctx.strokeStyle = BIRD_BODY_DARK;
+  ctx.strokeStyle = bird.bodyDark;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(0, 0, BIRD_RADIUS, 0, Math.PI * 2);
@@ -328,7 +331,7 @@ function drawFloatingScores(ctx: CanvasRenderingContext2D, state: GameState) {
   ctx.textAlign = "start";
 }
 
-export function render(ctx: CanvasRenderingContext2D, state: GameState) {
+export function render(ctx: CanvasRenderingContext2D, state: GameState, bird: CharacterPalette = DEFAULT_BIRD) {
   ctx.save();
 
   if (state.screenShake > 0) {
@@ -351,8 +354,8 @@ export function render(ctx: CanvasRenderingContext2D, state: GameState) {
   drawBushes(ctx, state.bushOffset);
   drawGround(ctx, state.groundOffset);
 
-  if (!state.isDead) drawBirdTrail(ctx, state);
-  drawBird(ctx, state);
+  if (!state.isDead) drawBirdTrail(ctx, state, bird);
+  drawBird(ctx, state, bird);
   drawParticles(ctx, state);
   drawFloatingScores(ctx, state);
 

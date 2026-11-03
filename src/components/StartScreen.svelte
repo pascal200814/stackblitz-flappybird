@@ -1,5 +1,6 @@
 <script lang="ts">
   export let highScore = 0;
+  export let onOpenCharacterSelect: () => void = () => {};
 </script>
 
 <div class="start-screen">
@@ -42,6 +43,11 @@
     <span class="tap-text">Tap to start</span>
     <span class="tap-arrow">▼</span>
   </div>
+
+  <button class="char-btn" on:click={onOpenCharacterSelect}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+    <span>Choose Bird</span>
+  </button>
 </div>
 
 <style>
@@ -210,5 +216,30 @@
   @keyframes pulse {
     0%, 100% { opacity: 0.7; }
     50% { opacity: 1; }
+  }
+
+  .char-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 8px 20px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .char-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .char-btn:active {
+    transform: scale(0.96);
   }
 </style>

@@ -13,6 +13,8 @@
   import { resumeAudio, playFlap, playScore, playHit, playDie, playMedal } from "./game/sound";
   import StartScreen from "./components/StartScreen.svelte";
   import GameOverScreen from "./components/GameOverScreen.svelte";
+  import CharacterSelectScreen from "./components/CharacterSelectScreen.svelte";
+  import { getSelectedCharacter, setSelectedCharacter, CHARACTERS, type CharacterPalette } from "./game/characters";
 
   const HIGH_SCORE_KEY = "flappy-high-score";
 
@@ -30,6 +32,8 @@
   let isNewHigh = false;
   let isPaused = false;
   let soundEnabled = true;
+  let showCharSelect = false;
+  let selectedCharacter: CharacterPalette = CHARACTERS[0];
 
 
   function handleInput() {
@@ -51,6 +55,13 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
+    if (showCharSelect) {
+      if (e.code === "Escape") {
+        e.preventDefault();
+        showCharSelect = false;
+      }
+      return;
+    }
     if (e.code === "Space" || e.code === "ArrowUp") {
       e.preventDefault();
       if (state.isDead) {
@@ -81,6 +92,8 @@
 
     const savedSound = localStorage.getItem("flappy-sound");
     if (savedSound !== null) soundEnabled = savedSound === "true";
+
+    selectedCharacter = getSelectedCharacter();
 
     ctx = canvas.getContext("2d")!;
 
@@ -113,7 +126,7 @@
         state = next;
       }
 
-      render(ctx, state);
+      render(ctx, state, selectedCharacter);
       animFrame = requestAnimationFrame(loop);
     };
 
@@ -126,6 +139,20 @@
       window.removeEventListener("keydown", handleKeydown);
     };
   });
+
+  function openCharSelect() {
+    showCharSelect = true;
+  }
+
+  function closeCharSelect() {
+    showCharSelect = false;
+  }
+
+  function handleCharSelect(id: string) {
+    setSelectedCharacter(id);
+    selectedCharacter = CHARACTERS.find((c) => c.id === id) ?? CHARACTERS[0];
+    showCharSelect = false;
+  }
 
   function toggleSound() {
     soundEnabled = !soundEnabled;
@@ -174,9 +201,19 @@
         on:pointerdown={handleCanvasPointer}
       ></canvas>
 
-      {#if !hasStarted && !isDead}
+      {#if !hasStarted && !isDead && !showCharSelect}
         <div class="overlay" transition:fade={{ duration: 200 }}>
-          <StartScreen highScore={highScore} />
+          <StartScreen highScore={highScore} onOpenCharacterSelect={openCharSelect} />
+        </div>
+      {/if}
+
+      {#if showCharSelect}
+        <div class="overlay" transition:fade={{ duration: 200 }}>
+          <CharacterSelectScreen
+            selectedId={selectedCharacter.id}
+            onSelect={handleCharSelect}
+            onBack={closeCharSelect}
+          />
         </div>
       {/if}
 
