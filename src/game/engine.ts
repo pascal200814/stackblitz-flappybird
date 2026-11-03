@@ -1,7 +1,7 @@
 export const CANVAS_WIDTH = 400;
 export const CANVAS_HEIGHT = 600;
 
-export const GRAVITY = 0.3;
+export const GRAVITY = 0.2;
 export const JUMP_VELOCITY = -7.5;
 export const PIPE_WIDTH = 70;
 export const BASE_PIPE_GAP = 170;
