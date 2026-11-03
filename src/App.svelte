@@ -53,6 +53,10 @@
   function handleKeydown(e: KeyboardEvent) {
     if (e.code === "Space" || e.code === "ArrowUp") {
       e.preventDefault();
+      if (state.isDead) {
+        reset();
+        return;
+      }
       handleInput();
     } else if (e.code === "KeyP" || e.code === "Escape") {
       e.preventDefault();
