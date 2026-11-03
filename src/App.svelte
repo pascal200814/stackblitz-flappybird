@@ -203,7 +203,7 @@
 
       {#if !hasStarted && !isDead && !showCharSelect}
         <div class="overlay" transition:fade={{ duration: 200 }}>
-          <StartScreen highScore={highScore} onOpenCharacterSelect={openCharSelect} />
+          <StartScreen highScore={highScore} character={selectedCharacter} onOpenCharacterSelect={openCharSelect} />
         </div>
       {/if}
 

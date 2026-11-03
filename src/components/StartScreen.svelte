@@ -1,11 +1,14 @@
 <script lang="ts">
+  import type { CharacterPalette } from "../game/characters";
+
   export let highScore = 0;
   export let onOpenCharacterSelect: () => void = () => {};
+  export let character: CharacterPalette;
 </script>
 
 <div class="start-screen">
   <div class="logo-container">
-    <div class="bird-icon">
+    <div class="bird-icon" style="--body:{character.body}; --body-dark:{character.bodyDark}; --wing:{character.wing}; --wing-dark:{character.wingDark}; --beak:{character.beak}; --beak-dark:{character.beakDark};">
       <div class="bird-body">
         <div class="bird-wing"></div>
         <div class="bird-eye">
@@ -73,8 +76,8 @@
     position: relative;
     width: 48px;
     height: 48px;
-    background: #f7d51d;
-    border: 3px solid #c9a200;
+    background: var(--body);
+    border: 3px solid var(--body-dark);
     border-radius: 50%;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
@@ -85,8 +88,8 @@
     top: 18px;
     width: 24px;
     height: 16px;
-    background: #fff;
-    border: 2px solid #ddd;
+    background: var(--wing);
+    border: 2px solid var(--wing-dark);
     border-radius: 50%;
     animation: wingflap 0.4s ease-in-out infinite alternate;
   }
@@ -118,7 +121,7 @@
     top: 20px;
     width: 0;
     height: 0;
-    border-left: 14px solid #f29030;
+    border-left: 14px solid var(--beak);
     border-top: 6px solid transparent;
     border-bottom: 6px solid transparent;
   }
